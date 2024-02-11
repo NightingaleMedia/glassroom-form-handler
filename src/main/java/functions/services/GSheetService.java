@@ -19,7 +19,8 @@ import java.util.stream.Collectors;
 
 public class GSheetService {
 
-  private static final Dotenv dotenv = Dotenv.load();
+  private static final Dotenv dotenv =
+      Dotenv.configure().ignoreIfMissing().ignoreIfMalformed().load();
   private static final String APPLICATION_NAME = "Google-Sheets-API-Java-Quickstart";
   private static final String SHEET_ID = dotenv.get("DEFAULT_SHEET_ID");
   private static final String CORPORATE_EVENT_TAB = "CorporateEventRequest";

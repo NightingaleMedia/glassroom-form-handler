@@ -10,9 +10,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class EmailService {
-  protected static Dotenv dotenv = Dotenv.load();
   private static final String TEMPLATE_ID = "d-55ccf61b94cb4ed081fe567a96a1fddc";
   private static final String REPLY_TO_KEY = "email";
+  protected static Dotenv dotenv =  Dotenv.configure().ignoreIfMissing().ignoreIfMalformed().load();
   private static final String TO_EMAIL = dotenv.get("DEFAULT_TO_EMAIL");
   public String sendEmail(String eventDisplayName, List<FormLabelValue> formLabelValues) {
 
