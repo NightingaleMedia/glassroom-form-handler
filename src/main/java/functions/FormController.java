@@ -39,9 +39,10 @@ public class FormController implements HttpFunction {
 
     mailer.sendEmail(formRequest.get("eventTypeDisplayName").getAsString(), labelArr);
     sht.addSheetRow(formRequest.get("eventType").getAsString(), labelArr);
-
-    BufferedWriter writer = response.getWriter();
     response.setContentType("application/json");
-    writer.write("{\"hello\":\"world\"}");
+    response.setStatusCode(200);
+    BufferedWriter writer = response.getWriter();
+
+    writer.write("{\"message\":\"Success\"}");
   }
 }

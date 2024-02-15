@@ -1,0 +1,10 @@
+// DEPLOY
+gcloud functions deploy glassroom-form-handler \
+--gen2 \
+--entry-point=functions.FormController \
+--runtime=java17 \
+--region=us-central1 \
+--source=. \
+--trigger-http \
+--allow-unauthenticated \
+--env-vars-file=.env
