@@ -39,15 +39,16 @@ public class GSheetService {
   private static GoogleCredentials getCredentials() throws IOException {
     // Load client secrets.
     //    InputStream in = GSheetService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-
+    GoogleCredentials googleCredentials;
     System.out.println(CREDENTIALS_FILE_PATH);
     InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);
 
     if (in == null) {
-      throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+      //      throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+      googleCredentials = GoogleCredentials.getApplicationDefault();
+    } else {
+      googleCredentials = GoogleCredentials.fromStream(in).createScoped(SCOPES);
     }
-
-    GoogleCredentials googleCredentials = GoogleCredentials.fromStream(in).createScoped(SCOPES);
 
     return googleCredentials;
   }
