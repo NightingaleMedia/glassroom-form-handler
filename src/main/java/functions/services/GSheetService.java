@@ -41,14 +41,14 @@ public class GSheetService {
     //    InputStream in = GSheetService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
     GoogleCredentials googleCredentials;
     System.out.println(CREDENTIALS_FILE_PATH);
-    InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);
+//    InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);
 
-    if (in == null) {
+//    if (in == null) {
       //      throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-      googleCredentials = GoogleCredentials.getApplicationDefault();
-    } else {
-      googleCredentials = GoogleCredentials.fromStream(in).createScoped(SCOPES);
-    }
+      googleCredentials = GoogleCredentials.getApplicationDefault().createScoped((SCOPES));
+//    } else {
+//      googleCredentials = GoogleCredentials.fromStream(in).createScoped(SCOPES);
+//    }
 
     return googleCredentials;
   }
