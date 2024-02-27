@@ -40,7 +40,7 @@ public class GSheetService {
     // Load client secrets.
     //    InputStream in = GSheetService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
 
-    InputStream in = new FileInputStream("src/main/resources/credentials.json");
+    InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);
 
     if (in == null) {
       throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);

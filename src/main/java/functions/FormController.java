@@ -26,6 +26,20 @@ public class FormController implements HttpFunction {
   public void service(HttpRequest request, HttpResponse response)
       throws IOException, GeneralSecurityException {
 
+    response.appendHeader("Access-Control-Allow-Origin", "*");
+
+    if ("OPTIONS".equals(request.getMethod())) {
+      response.appendHeader("Access-Control-Allow-Methods", "POST, GET");
+      response.appendHeader("Access-Control-Allow-Headers", "Content-Type");
+      response.appendHeader("Access-Control-Max-Age", "3600");
+      response.setStatusCode(204);
+      return;
+    }
+    if("GET".equals(request.getMethod())){
+        response.setStatusCode(204);
+        return;
+    }
+
     Gson gson = new Gson();
 
     JsonObject parsedRequest = gson.fromJson(request.getReader(), JsonObject.class);
@@ -39,6 +53,7 @@ public class FormController implements HttpFunction {
 
     mailer.sendEmail(formRequest.get("eventTypeDisplayName").getAsString(), labelArr);
     sht.addSheetRow(formRequest.get("eventType").getAsString(), labelArr);
+
     response.setContentType("application/json");
     response.setStatusCode(200);
     BufferedWriter writer = response.getWriter();
