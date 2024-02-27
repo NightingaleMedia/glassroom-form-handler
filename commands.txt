@@ -7,4 +7,4 @@ gcloud functions deploy glassroom-form-handler \
 --source=. \
 --trigger-http \
 --allow-unauthenticated \
---env-vars-file=.env
+--env-vars-file=.env.yaml
