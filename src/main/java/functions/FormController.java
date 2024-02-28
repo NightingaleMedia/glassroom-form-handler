@@ -4,6 +4,7 @@ import com.google.cloud.functions.HttpFunction;
 import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import functions.services.EmailService;
 import functions.services.FormLabelValue;
@@ -50,8 +51,8 @@ public class FormController implements HttpFunction {
                     .fromJson(formRequest.getAsJsonArray("formValues"), FormLabelValue[].class))
             .toList();
 
-    Boolean shouldSendEmail = parsedRequest.getAsJsonObject().get("skipEmail").getAsBoolean();
-    if (shouldSendEmail == null || shouldSendEmail) {
+    JsonElement shouldSendEmail = parsedRequest.getAsJsonObject().get("skipEmail");
+    if (shouldSendEmail.isJsonNull()) {
       mailer.sendEmail(formRequest.get("eventTypeDisplayName").getAsString(), labelArr);
     }
     sht.addSheetRow(formRequest.get("eventType").getAsString(), labelArr);
