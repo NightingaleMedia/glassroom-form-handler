@@ -14,6 +14,7 @@ public class EmailService {
   private static final String REPLY_TO_KEY = "email";
   protected static Dotenv dotenv =  Dotenv.configure().ignoreIfMissing().ignoreIfMalformed().load();
   private static final String TO_EMAIL = dotenv.get("DEFAULT_TO_EMAIL");
+  private static final String FROM_EMAIL = dotenv.get("DEFAULT_FROM_EMAIL");
   public String sendEmail(String eventDisplayName, List<FormLabelValue> formLabelValues) {
 
     Mail mail = new Mail();
@@ -30,7 +31,7 @@ public class EmailService {
 
     mail.setTemplateId(TEMPLATE_ID);
 
-    mail.setFrom(new Email("alsigman@gmail.com"));
+    mail.setFrom(new Email(FROM_EMAIL));
 
     String emailValue =
         formLabelValues.stream()
