@@ -45,7 +45,7 @@ public class GSheetService {
 
 //    if (in == null) {
       //      throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-      googleCredentials = GoogleCredentials.getApplicationDefault().createScoped((SCOPES));
+    googleCredentials = GoogleCredentials.getApplicationDefault().createScoped(SCOPES);
 //    } else {
 //      googleCredentials = GoogleCredentials.fromStream(in).createScoped(SCOPES);
 //    }
