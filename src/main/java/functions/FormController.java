@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 import functions.services.EmailService;
 import functions.services.FormLabelValue;
 import functions.services.GSheetService;
-import io.github.cdimascio.dotenv.Dotenv;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -35,9 +34,9 @@ public class FormController implements HttpFunction {
       response.setStatusCode(204);
       return;
     }
-    if("GET".equals(request.getMethod())){
-        response.setStatusCode(204);
-        return;
+    if ("GET".equals(request.getMethod())) {
+      response.setStatusCode(204);
+      return;
     }
 
     Gson gson = new Gson();
@@ -51,7 +50,10 @@ public class FormController implements HttpFunction {
                     .fromJson(formRequest.getAsJsonArray("formValues"), FormLabelValue[].class))
             .toList();
 
-    mailer.sendEmail(formRequest.get("eventTypeDisplayName").getAsString(), labelArr);
+    Boolean shouldSendEmail = parsedRequest.getAsJsonObject().get("skipEmail").getAsBoolean();
+    if (shouldSendEmail == null || shouldSendEmail) {
+      mailer.sendEmail(formRequest.get("eventTypeDisplayName").getAsString(), labelArr);
+    }
     sht.addSheetRow(formRequest.get("eventType").getAsString(), labelArr);
 
     response.setContentType("application/json");
