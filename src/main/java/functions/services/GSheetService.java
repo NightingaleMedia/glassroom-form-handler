@@ -37,19 +37,9 @@ public class GSheetService {
    * @throws IOException If the credentials.json file cannot be found.
    */
   private static GoogleCredentials getCredentials() throws IOException {
-    // Load client secrets.
-    //    InputStream in = GSheetService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
     GoogleCredentials googleCredentials;
     System.out.println(CREDENTIALS_FILE_PATH);
-//    InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);
-
-//    if (in == null) {
-      //      throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
     googleCredentials = GoogleCredentials.getApplicationDefault().createScoped(SCOPES);
-//    } else {
-//      googleCredentials = GoogleCredentials.fromStream(in).createScoped(SCOPES);
-//    }
-
     return googleCredentials;
   }
   // Populate ValueRange
