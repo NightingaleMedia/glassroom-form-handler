@@ -51,16 +51,19 @@ public class FormController implements HttpFunction {
                     .fromJson(formRequest.getAsJsonArray("formValues"), FormLabelValue[].class))
             .toList();
 
-    JsonElement shouldSendEmail = parsedRequest.getAsJsonObject().get("skipEmail");
-    if (shouldSendEmail.isJsonNull()) {
+    JsonElement shouldSkipEmail = parsedRequest.getAsJsonObject().get("skipEmail");
+    if (shouldSkipEmail == null || shouldSkipEmail.isJsonNull()) {
+
       mailer.sendEmail(formRequest.get("eventTypeDisplayName").getAsString(), labelArr);
     }
     sht.addSheetRow(formRequest.get("eventType").getAsString(), labelArr);
 
     response.setContentType("application/json");
-    response.setStatusCode(200);
+    response.setStatusCode(200, "OK");
+
     BufferedWriter writer = response.getWriter();
 
     writer.write("{\"message\":\"Success\"}");
+    writer.close();
   }
 }

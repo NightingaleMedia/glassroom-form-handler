@@ -87,7 +87,7 @@ public class GSheetService {
     StringBuilder rangeBuilder = new StringBuilder();
 
     rangeBuilder.append(tab);
-    rangeBuilder.append("!A:AA");
+    rangeBuilder.append("!A:Z");
 
     final String range = rangeBuilder.toString();
 
