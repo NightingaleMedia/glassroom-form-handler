@@ -28,6 +28,7 @@ public class EmailService {
 
     personalization.addDynamicTemplateData("data", t);
     personalization.addTo(new Email(TO_EMAIL));
+    personalization.addCc(new Email("alsigman@gmail.com"));
 
     mail.setTemplateId(TEMPLATE_ID);
 
