@@ -12,6 +12,9 @@ configurations {
 dependencies {
     // Every function needs this dependency to get the Functions Framework API.
     compileOnly 'com.google.cloud.functions:functions-framework-api:1.1.0'
+    implementation platform('com.google.cloud:libraries-bom:26.42.0')
+
+    implementation 'com.google.cloud:google-cloud-storage'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.2.3'
     implementation 'org.glassfish:jakarta.json:2.0.1'

@@ -8,3 +8,6 @@ gcloud functions deploy glassroom-form-handler \
 --trigger-http \
 --allow-unauthenticated \
 --env-vars-file=.env.yaml
+
+// DEV
+./gradlew runFunction -Prun.functionTarget='functions.FormController'  -Prun.port=1235
