@@ -39,7 +39,7 @@ public class RouterService {
 
     }
 
-    public String handleEmailSignup(HttpRequest request) throws Exception {
+    public String handleEmailSignup(HttpRequest request, String email) throws Exception {
         sht.addEmailRow("test");
 
         // check if email exists

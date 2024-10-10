@@ -57,7 +57,7 @@ public class FormController implements HttpFunction {
                     response.setStatusCode(200, "OK");
                     break;
                 case "/email-list":
-                    routerService.
+                    routerService.handleEmailSignup(request, "test");
             }
         } catch (Exception ex) {
             response.setStatusCode(400, "Bad Request");
