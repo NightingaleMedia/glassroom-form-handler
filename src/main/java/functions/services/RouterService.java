@@ -48,10 +48,9 @@ public class RouterService {
 
         JsonObject parsedRequest = gson.fromJson(request.getReader(), JsonObject.class);
 
-        JsonObject formRequest = parsedRequest.getAsJsonObject("data");
-        String emailAddress = formRequest.get("contact_email").getAsString();
+        String emailAddress = parsedRequest.get("contact_email").getAsString();
 
-        String orderNumber = formRequest.get("order_number").getAsString();
+        String orderNumber = parsedRequest.get("order_number").getAsString();
 
         sht.addEmailRow(emailAddress, "ORDER PAID", orderNumber);
 
