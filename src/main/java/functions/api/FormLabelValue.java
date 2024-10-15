@@ -10,11 +10,11 @@ public class FormLabelValue {
         value = v;
     }
 
-    String getLabel(){
+    public String getLabel(){
         return this.label;
     }
 
-    String getValue(){
+    public String getValue(){
         return this.value;
     }
 

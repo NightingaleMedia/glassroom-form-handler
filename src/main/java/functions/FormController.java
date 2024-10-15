@@ -29,11 +29,11 @@ public class FormController implements HttpFunction {
         Map<String, List<String>> headerMap = request.getHeaders();
 
         System.out.println(headerMap.toString());
-        System.out.println(request.getPath().substring(23));
-        if (headerMap.get("X-Forwarded-For") == null || !Objects.equals(headerMap.get("X-Forwarded-For").get(0), "162.241.216.221")) {
-            response.setStatusCode(401);
-            return;
-        }
+        System.out.println("PATH: " + request.getPath());
+//        i f (headerMap.get("X-Forwarded-For") == null || !Objects.equals(headerMap.get("X-Forwarded-For").get(0), "162.241.216.221")) {
+//            response.setStatusCode(401);
+//            return;
+//        }
 
         response.appendHeader("Access-Control-Allow-Origin", "*");
 
@@ -49,7 +49,9 @@ public class FormController implements HttpFunction {
 
         BufferedWriter writer = response.getWriter();
 
-        String endpoint = request.getPath().substring(23);
+//        String endpoint = request.getPath().substring(23);
+
+        String endpoint = request.getPath();
         ResponseMessage<Object> responseMessage = new ResponseMessage<>();
         try {
             switch (endpoint) {

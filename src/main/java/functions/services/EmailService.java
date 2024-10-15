@@ -34,15 +34,14 @@ public class EmailService {
     personalization.addDynamicTemplateData("data", t);
     personalization.addTo(new Email(TO_EMAIL));
 
-
     mail.setTemplateId(TEMPLATE_ID);
 
     mail.setFrom(new Email(FROM_EMAIL));
 
     String emailValue =
         formLabelValues.stream()
-            .filter(e -> e.getLabel().toLowerCase().equals(REPLY_TO_KEY))
-            .collect(Collectors.toList())
+            .filter(e -> e.getLabel().equalsIgnoreCase(REPLY_TO_KEY))
+            .toList()
             .get(0)
             .getValue();
 
@@ -57,7 +56,7 @@ public class EmailService {
       request.setBody(mail.build());
       Response response = sg.api(request);
 
-      return response.getBody().toString();
+      return response.getBody();
     } catch (IOException ex) {
       throw new RuntimeException(ex.getMessage());
     }
