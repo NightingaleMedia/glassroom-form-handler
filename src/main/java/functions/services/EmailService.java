@@ -1,12 +1,17 @@
 package functions.services;
 
-import com.sendgrid.*;
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
+import functions.api.FormLabelValue;
 import io.github.cdimascio.dotenv.Dotenv;
+
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class EmailService {
@@ -28,7 +33,7 @@ public class EmailService {
 
     personalization.addDynamicTemplateData("data", t);
     personalization.addTo(new Email(TO_EMAIL));
-    personalization.addCc(new Email("alsigman@gmail.com"));
+
 
     mail.setTemplateId(TEMPLATE_ID);
 
@@ -50,7 +55,6 @@ public class EmailService {
       request.setMethod(Method.POST);
       request.setEndpoint("mail/send");
       request.setBody(mail.build());
-      //      Response response = sg.makeCall(request);
       Response response = sg.api(request);
 
       return response.getBody().toString();

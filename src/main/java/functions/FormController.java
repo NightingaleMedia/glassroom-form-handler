@@ -5,7 +5,7 @@ import com.google.cloud.functions.HttpRequest;
 import com.google.cloud.functions.HttpResponse;
 import com.google.gson.Gson;
 import functions.api.ResponseMessage;
-import functions.services.GSheetService;
+import functions.api.mailchimp.response.MailChimpListStats;
 import functions.services.RouterService;
 
 import java.io.BufferedWriter;
@@ -17,9 +17,9 @@ import java.util.Objects;
 
 public class FormController implements HttpFunction {
 
+
     RouterService routerService = new RouterService();
 
-    GSheetService sht = new GSheetService();
     Gson gson = new Gson();
 
     @Override
@@ -29,7 +29,7 @@ public class FormController implements HttpFunction {
         Map<String, List<String>> headerMap = request.getHeaders();
 
         System.out.println(headerMap.toString());
-
+        System.out.println(request.getPath().substring(23));
         if (headerMap.get("X-Forwarded-For") == null || !Objects.equals(headerMap.get("X-Forwarded-For").get(0), "162.241.216.221")) {
             response.setStatusCode(401);
             return;
@@ -48,22 +48,31 @@ public class FormController implements HttpFunction {
         response.setContentType("application/json");
 
         BufferedWriter writer = response.getWriter();
-        ResponseMessage responseMessage = new ResponseMessage();
 
+        String endpoint = request.getPath().substring(23);
+        ResponseMessage<Object> responseMessage = new ResponseMessage<>();
         try {
-            switch (request.getPath()) {
+            switch (endpoint) {
                 case "/send-form":
                     routerService.handleGlassroomForm(request);
                     response.setStatusCode(200, "OK");
                     break;
                 case "/email-list":
-                    routerService.handleEmailSignup(request, "test");
+                    MailChimpListStats stats = routerService.handleEmailSignup(request);
+                    responseMessage = new ResponseMessage<>();
+                    responseMessage.setData(stats);
+                    break;
+                case "/order-paid-hook":
+                    routerService.handleOrderPaidEmail(request);
+                    responseMessage = new ResponseMessage<>();
+                    responseMessage.setData(null);
+
+
             }
         } catch (Exception ex) {
             response.setStatusCode(400, "Bad Request");
             responseMessage.setMessage(ex.getMessage());
         }
-
 
         writer.write(gson.toJson(responseMessage));
         writer.close();

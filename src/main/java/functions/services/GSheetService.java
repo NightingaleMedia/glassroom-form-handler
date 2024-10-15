@@ -9,6 +9,7 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import functions.api.FormLabelValue;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class GSheetService {
      */
     private static GoogleCredentials getCredentials() throws IOException {
         GoogleCredentials googleCredentials;
-        System.out.println(CREDENTIALS_FILE_PATH);
+        System.out.println("file path: " + CREDENTIALS_FILE_PATH);
         googleCredentials = GoogleCredentials.getApplicationDefault().createScoped(SCOPES);
         return googleCredentials;
     }
@@ -49,7 +50,6 @@ public class GSheetService {
     // Populate ValueRange
     static ValueRange requestBuilder(List<FormLabelValue> values, String range) {
 
-        var d = values.stream().map(e -> e.getValue()).collect(Collectors.toList());
         return new ValueRange()
                 .setValues(
                         Arrays.asList(values.stream().map(e -> e.getValue()).collect(Collectors.toList())))
