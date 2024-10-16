@@ -71,7 +71,7 @@ public class MailchimpService {
         return stats.getStats();
     }
 
-    public MailchimpSubscriptionResponse subscribeUser(String email) throws IOException, InterruptedException {
+    public MailchimpSubscriptionResponse subscribeUser(String email, boolean sendConfirmation) throws IOException, InterruptedException {
         if (isUnsubscribed(email)) {
             return null;
         }
@@ -84,7 +84,6 @@ public class MailchimpService {
 
         request.setUpdateExisting(true);
         request.setMembers(Collections.singletonList(member));
-
 
         HttpResponse<String> getResponse = client.send(getSubscribePost(request), HttpResponse.BodyHandlers.ofString());
 

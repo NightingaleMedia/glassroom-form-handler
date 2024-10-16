@@ -24,7 +24,6 @@ public class RouterService {
 
     public String handleGlassroomForm(HttpRequest request) throws Exception {
 
-
         JsonObject parsedRequest = gson.fromJson(request.getReader(), JsonObject.class);
 
         JsonObject formRequest = parsedRequest.getAsJsonObject("data");
@@ -33,11 +32,20 @@ public class RouterService {
                                 new Gson()
                                         .fromJson(formRequest.getAsJsonArray("formValues"), FormLabelValue[].class))
                         .toList();
-
         JsonElement shouldSkipEmail = parsedRequest.getAsJsonObject().get("skipEmail");
         if (shouldSkipEmail == null || shouldSkipEmail.isJsonNull()) {
             mailer.sendEmail(formRequest.get("eventTypeDisplayName").getAsString(), labelArr);
         }
+
+        String emailValue =
+                labelArr.stream()
+                        .filter(e -> e.getLabel().equalsIgnoreCase("email"))
+                        .toList()
+                        .get(0)
+                        .getValue();
+
+        mailchimp.subscribeUser(emailValue, true);
+        mailer.sendMailchimpAlertEmail(emailValue);
         sht.addSheetRow(formRequest.get("eventType").getAsString(), labelArr);
 
         return "Ok";
@@ -54,7 +62,9 @@ public class RouterService {
 
         sht.addEmailRow(emailAddress, "ORDER PAID", orderNumber);
 
-        mailchimp.subscribeUser(emailAddress);
+        mailchimp.subscribeUser(emailAddress, true);
+
+        mailer.sendMailchimpAlertEmail(emailAddress);
     }
 
     public MailChimpListStats handleEmailSignup(HttpRequest request) throws Exception {
@@ -67,7 +77,8 @@ public class RouterService {
 
         if (shouldSub) {
             sht.addEmailRow(emailAddress, "FORM SIGNUP", "");
-            mailchimp.subscribeUser(emailAddress);
+            mailchimp.subscribeUser(emailAddress, true);
+            mailer.sendMailchimpAlertEmail(emailAddress);
         } else {
             mailchimp.unSubscribeUser(emailAddress);
         }

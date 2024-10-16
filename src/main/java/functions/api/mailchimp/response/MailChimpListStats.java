@@ -9,16 +9,16 @@ import lombok.Data;
 public class MailChimpListStats {
 
     @SerializedName("member_count")
-    public float memberCount;
+    public int memberCount;
 
     @SerializedName("member_count_since_send")
-    public float memberCountSinceSend;
+    public int memberCountSinceSend;
 
     @SerializedName("unsubscribe_count")
-    public float unsubscribeCount;
+    public int unsubscribeCount;
 
     @SerializedName("unsubscribe_count_since_send")
-    public float unsubSinceLast;
+    public int unsubSinceLast;
 
     @SerializedName("open_rate")
     public double openRate;

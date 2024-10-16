@@ -1,10 +1,10 @@
-package functions.services;
+package functions.api.dynamicmailer;
 
 import functions.api.FormLabelValue;
 
 import java.util.List;
 
-public class EmailTemplate {
+public class EventEmailTemplate {
   public String eventTypeDisplayName;
   public List<FormLabelValue> formValues;
   public String getEventTypeDisplayName() {
