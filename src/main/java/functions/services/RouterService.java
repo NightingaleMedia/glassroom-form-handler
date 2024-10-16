@@ -55,7 +55,7 @@ public class RouterService {
     public void handleOrderPaidEmail(HttpRequest request) throws Exception {
 
         JsonObject parsedRequest = gson.fromJson(request.getReader(), JsonObject.class);
-
+        System.out.println("Order Paid Request: " + parsedRequest.toString());
         String emailAddress = parsedRequest.get("contact_email").getAsString();
 
         String orderNumber = parsedRequest.get("order_number").getAsString();

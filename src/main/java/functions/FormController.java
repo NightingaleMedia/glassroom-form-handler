@@ -55,6 +55,8 @@ public class FormController implements HttpFunction {
         ResponseMessage<Object> responseMessage = new ResponseMessage<>();
         try {
             switch (endpoint) {
+                case "/ping":
+                    response.setStatusCode(200, "OK");
                 case "/send-form":
                     routerService.handleGlassroomForm(request);
                     response.setStatusCode(200, "OK");
@@ -68,6 +70,9 @@ public class FormController implements HttpFunction {
                     routerService.handleOrderPaidEmail(request);
                     responseMessage = new ResponseMessage<>();
                     responseMessage.setData(null);
+                    break;
+                default:
+                    break;
 
 
             }
