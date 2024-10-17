@@ -4,15 +4,19 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.DateTime;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import functions.api.FormLabelValue;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +45,7 @@ public class GSheetService {
      */
     private static GoogleCredentials getCredentials() throws IOException {
         GoogleCredentials googleCredentials;
-        System.out.println(CREDENTIALS_FILE_PATH);
+        System.out.println("file path: " + CREDENTIALS_FILE_PATH);
         googleCredentials = GoogleCredentials.getApplicationDefault().createScoped(SCOPES);
         return googleCredentials;
     }
@@ -49,10 +53,9 @@ public class GSheetService {
     // Populate ValueRange
     static ValueRange requestBuilder(List<FormLabelValue> values, String range) {
 
-        var d = values.stream().map(e -> e.getValue()).collect(Collectors.toList());
         return new ValueRange()
                 .setValues(
-                        Arrays.asList(values.stream().map(e -> e.getValue()).collect(Collectors.toList())))
+                        Arrays.asList(values.stream().map(FormLabelValue::getValue).collect(Collectors.toList())))
                 .setMajorDimension("ROWS")
                 .setRange(range);
     }
@@ -71,12 +74,19 @@ public class GSheetService {
      * Prints the names and majors of students in a sample spreadsheet:
      * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
      */
-    public void addEmailRow(String emailValue) {
+    public void addEmailRow(String emailValue, String source, String id) {
         StringBuilder rangeBuilder = new StringBuilder();
         rangeBuilder.append(EMAIL_SIGNUP_TAB);
         rangeBuilder.append("!A:Z");
         final String range = rangeBuilder.toString();
-        List<Object> emailRow = Arrays.asList("Created At", "test", emailValue);
+
+        LocalDate currentDate = LocalDate.now();
+
+        // Format the date
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = currentDate.format(formatter);
+
+        List<Object> emailRow = Arrays.asList(formattedDate, source, emailValue, id);
         ValueRange valueRange = new ValueRange()
                 .setValues(
                         Arrays.asList(emailRow))

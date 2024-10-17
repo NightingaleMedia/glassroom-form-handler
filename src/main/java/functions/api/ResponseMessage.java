@@ -1,18 +1,12 @@
 package functions.api;
 
-public class ResponseMessage {
+import lombok.Data;
+
+@Data
+public class ResponseMessage<T> {
 
     private String message = "Success";
+    private T data = null;
 
-    public ResponseMessage() {
 
-    }
-
-    public ResponseMessage(String message) {
-        this.message = message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

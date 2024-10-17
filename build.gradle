@@ -12,6 +12,10 @@ configurations {
 dependencies {
     // Every function needs this dependency to get the Functions Framework API.
     compileOnly 'com.google.cloud.functions:functions-framework-api:1.1.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
     implementation platform('com.google.cloud:libraries-bom:26.42.0')
 
     implementation 'com.google.cloud:google-cloud-storage'
