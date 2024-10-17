@@ -12,78 +12,96 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RouterService {
-    private static final Dotenv dotenv =
-            Dotenv.configure().ignoreIfMissing().ignoreIfMalformed().load();
-    GSheetService sht = new GSheetService();
+	private static final Dotenv dotenv =
+			Dotenv.configure()
+					.ignoreIfMissing()
+					.ignoreIfMalformed()
+					.load();
+	GSheetService sht = new GSheetService();
 
-    EmailService mailer = new EmailService();
+	EmailService mailer = new EmailService();
 
-    MailchimpService mailchimp = new MailchimpService();
+	MailchimpService mailchimp = new MailchimpService();
 
-    Gson gson = new Gson();
+	Gson gson = new Gson();
 
-    public String handleGlassroomForm(HttpRequest request) throws Exception {
+	public String handleGlassroomForm(HttpRequest request) throws Exception {
 
-        JsonObject parsedRequest = gson.fromJson(request.getReader(), JsonObject.class);
+		JsonObject parsedRequest = gson.fromJson(request.getReader(), JsonObject.class);
 
-        JsonObject formRequest = parsedRequest.getAsJsonObject("data");
-        List<FormLabelValue> labelArr =
-                Arrays.stream(
-                                new Gson()
-                                        .fromJson(formRequest.getAsJsonArray("formValues"), FormLabelValue[].class))
-                        .toList();
-        JsonElement shouldSkipEmail = parsedRequest.getAsJsonObject().get("skipEmail");
-        if (shouldSkipEmail == null || shouldSkipEmail.isJsonNull()) {
-            mailer.sendEmail(formRequest.get("eventTypeDisplayName").getAsString(), labelArr);
-        }
+		JsonObject formRequest = parsedRequest.getAsJsonObject("data");
+		List<FormLabelValue> labelArr =
+				Arrays.stream(
+								new Gson()
+										.fromJson(formRequest.getAsJsonArray("formValues"), FormLabelValue[].class))
+						.toList();
+		JsonElement shouldSkipEmail = parsedRequest.getAsJsonObject()
+				.get("skipEmail");
+		if (shouldSkipEmail == null || shouldSkipEmail.isJsonNull()) {
+			mailer.sendEmail(formRequest.get("eventTypeDisplayName")
+					.getAsString(), labelArr);
+		}
 
-        String emailValue =
-                labelArr.stream()
-                        .filter(e -> e.getLabel().equalsIgnoreCase("email"))
-                        .toList()
-                        .get(0)
-                        .getValue();
+		String emailValue =
+				labelArr.stream()
+						.filter(e -> e.getLabel()
+								.equalsIgnoreCase("email"))
+						.toList()
+						.get(0)
+						.getValue();
 
-        mailchimp.subscribeUser(emailValue, true);
-        mailer.sendMailchimpAlertEmail(emailValue);
-        sht.addSheetRow(formRequest.get("eventType").getAsString(), labelArr);
+		var subbed = mailchimp.subscribeUser(emailValue, true);
+		if (subbed != null) {
+			mailer.sendMailchimpAlertEmail(emailValue);
+			sht.addSheetRow(formRequest.get("eventType")
+					.getAsString(), labelArr);
+		}
 
-        return "Ok";
 
-    }
+		return "Ok";
 
-    public void handleOrderPaidEmail(HttpRequest request) throws Exception {
+	}
 
-        JsonObject parsedRequest = gson.fromJson(request.getReader(), JsonObject.class);
-        System.out.println("Order Paid Request: " + parsedRequest.toString());
-        String emailAddress = parsedRequest.get("contact_email").getAsString();
+	public void handleOrderPaidEmail(HttpRequest request) throws Exception {
 
-        String orderNumber = parsedRequest.get("order_number").getAsString();
+		JsonObject parsedRequest = gson.fromJson(request.getReader(), JsonObject.class);
+		System.out.println("Order Paid Request: " + parsedRequest.toString());
+		String emailAddress = parsedRequest.get("contact_email")
+				.getAsString();
 
-        sht.addEmailRow(emailAddress, "ORDER PAID", orderNumber);
+		String orderNumber = parsedRequest.get("order_number")
+				.getAsString();
 
-        mailchimp.subscribeUser(emailAddress, true);
+		sht.addEmailRow(emailAddress, "ORDER PAID", orderNumber);
+		var subbed = mailchimp.subscribeUser(emailAddress, true);
+		if (subbed != null) {
+			mailchimp.subscribeUser(emailAddress, true);
+			mailer.sendMailchimpAlertEmail(emailAddress);
+		}
+	}
 
-        mailer.sendMailchimpAlertEmail(emailAddress);
-    }
+	public MailChimpListStats handleEmailSignup(HttpRequest request) throws Exception {
 
-    public MailChimpListStats handleEmailSignup(HttpRequest request) throws Exception {
+		JsonObject parsedRequest = gson.fromJson(request.getReader(), JsonObject.class);
 
-        JsonObject parsedRequest = gson.fromJson(request.getReader(), JsonObject.class);
+		JsonObject formRequest = parsedRequest.getAsJsonObject("data");
+		String emailAddress = formRequest.get("email")
+				.getAsString();
+		boolean shouldSub = formRequest.getAsJsonPrimitive("subscribe")
+				.getAsBoolean();
 
-        JsonObject formRequest = parsedRequest.getAsJsonObject("data");
-        String emailAddress = formRequest.get("email").getAsString();
-        boolean shouldSub = formRequest.getAsJsonPrimitive("subscribe").getAsBoolean();
+		if (shouldSub) {
+			sht.addEmailRow(emailAddress, "FORM SIGNUP", "");
+			var subbed = mailchimp.subscribeUser(emailAddress, true);
+			if (subbed == null) {
+				mailchimp.addPendingUser(emailAddress);
+			}
+			mailer.sendMailchimpAlertEmail(emailAddress);
+		} else {
+			mailchimp.unSubscribeUser(emailAddress);
+		}
+		MailChimpListStats stats = mailchimp.getGlassroomListDetails();
 
-        if (shouldSub) {
-            sht.addEmailRow(emailAddress, "FORM SIGNUP", "");
-            mailchimp.subscribeUser(emailAddress, true);
-            mailer.sendMailchimpAlertEmail(emailAddress);
-        } else {
-            mailchimp.unSubscribeUser(emailAddress);
-        }
-        MailChimpListStats stats = mailchimp.getGlassroomListDetails();
-
-        return stats;
-    }
+		return stats;
+	}
 }
